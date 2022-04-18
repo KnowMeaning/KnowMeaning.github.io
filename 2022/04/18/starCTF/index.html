@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
   
-  <title itemprop="name">Hello World | KnowMeaning</title>
+  <title itemprop="name">starCTF_RE方向的部分wp | KnowMeaning</title>
   
     <link rel="shortcut icon" href="/images/favicon.ico">
   
@@ -358,11 +358,11 @@
 
   <div class="pattern-center single-center">
     <!-- 有配图默认渲染第一张 -->
-    <div class="pattern-attachment-img lazyload" style="background-image: url(/images/back/sun-line-wallpaper.jpg);" src="" data-src="/images/back/sun-line-wallpaper.jpg">
+    <div class="pattern-attachment-img lazyload" style="background-image: url(/images/back/bo-of-circuits-wallpaper.jpg);" src="" data-src="/images/back/bo-of-circuits-wallpaper.jpg">
     </div>
     <header class="pattern-header single-header">
       <h1 class="entry-title">
-      Hello World</h1>
+      starCTF_RE方向的部分wp</h1>
       <p class="entry-census">
         <span>
           <a href="https://knowmeaning.github.io/">
@@ -374,7 +374,7 @@
         </span>
         <span class="bull">
         ·</span>
-        2022-4-14<span class="bull">
+        2022-4-18<span class="bull">
         ·</span>
       <span id="busuanzi_value_page_pv"></span>次阅读</p>
     </header>
@@ -388,8 +388,56 @@
         <!--<div class="toc-entry-content"><!-- 套嵌目录使用（主要为了支援评论）-->
         
         <div class="entry-content">
-          <h2 id="Start-a-New-Blog"><a href="#Start-a-New-Blog" class="headerlink" title="Start a New Blog"></a>Start a New Blog</h2><p>​	历尽千辛万苦，终于把大致博客的大致框架搞好了，虽然大多数模块还是空白无法访问的，但是接下来打算好好整理学习的内容，扩充博客的内容。</p>
-<p>填充的大部分主要都是空白，为了让每个模块都有内容所以都会编写空白文档，后面加新东西后会删掉空白文档</p>
+          <h2 id="Reverse"><a href="#Reverse" class="headerlink" title="Reverse"></a>Reverse</h2><h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>一个人做题确实很累，做题目数量太少感觉效率很低，NaCl做出来都已经晚上十点了，不过这次比赛能做出来两道也算是进步了，能切实的感受到水平提升果然令人高兴。（水平太差只做了两道RE，希望大佬看到多多指点）</p>
+<h3 id="Simple-File-System"><a href="#Simple-File-System" class="headerlink" title="Simple File System"></a>Simple File System</h3><p>四个文件，simplefs是主程序elf文件，flag里显示了flag的格式，instruction.txt介绍了使用方法</p>
+<p>依次输入format、mount、plantflag、exit</p>
+<p>可以看出来plantflag是关键代码</p>
+<p><img src="/images/writeup/image-20220418154025089.png" alt="image-20220418154025089"></p>
+<p>从各种字符串来看，可以猜测是打开了image.flag文件然后类似于光碟的方式把加密后的代码注入到image.flag文件里。所以最开始的image.flag就包含了真正的flag（刚刚操作后会覆盖一部分内容，所以解密得使用原来的文件）</p>
+<p>题目其实存在大量暗示，v21和v22都是rand()出来的，没有具体时间作为种子是不可能解密的</p>
+<p><img src="/images/writeup/image-20220418154622846.png" alt="image-20220418154622846"></p>
+<p>三串都调用了sub_1E16，可以任务这个就是加密算法了</p>
+<p>注意到传参时只有中间的代码传入了1，另外两个和rand有关的都传入了2</p>
+<p><img src="/images/writeup/image-20220418154750690.png" alt="image-20220418154750690"></p>
+<p>很显然，传入2和传入1会调用不同函数</p>
+<p><img src="/images/writeup/image-20220418154823171.png" alt="image-20220418154823171"></p>
+<p>sub_2305调用的rand()忽视</p>
+<p><img src="/images/writeup/image-20220418154853203.png" alt="image-20220418154853203"></p>
+<p>移位加上异或，都是可逆的算法，相比是真正的加密算法了</p>
+<p><img src="/images/writeup/image-20220418155033555.png" alt="image-20220418155033555"></p>
+<p><img src="/images/writeup/image-20220418155056334.png" alt="image-20220418155056334"></p>
+<p>分析文件格式对每32位解密，其中能得到一串明显是flag的字符串</p>
+<p>*CTF{Gwed9VQpM4Lanf0kEj1oFJR6}</p>
+<h3 id="NaCl"><a href="#NaCl" class="headerlink" title="NaCl"></a>NaCl</h3><p>没搞懂题目那个google的NaCl的意思，甚至没怎么看文档，不过还是能逆出来，就是十分吃力基本是硬逆的</p>
+<p><img src="/images/writeup/image-20220418155312393.png" alt="image-20220418155312393"></p>
+<p>找到主程序，可以看出来sub_8080900是关键函数</p>
+<p>点进去直接云里雾里，看F5反汇编是看不出东西的</p>
+<p><img src="/images/writeup/image-20220418155458183.png" alt="image-20220418155458183"></p>
+<p>被ida识别为程序领空的内容非常多，观察图像却发现有四个入口点</p>
+<p>调试了以后发现开始程序最后会jmp rdi，利用寄存器跳转（这就是ida无法反汇编的原因）</p>
+<p>中途会经历很多不同的程序再回到loc_8080980（前面部分先跳过不看）</p>
+<p><img src="/images/writeup/image-20220418155901775.png" alt="image-20220418155901775"></p>
+<p>观察程序结构会发现会进行一个循环（见到这个结构就让人怀疑是加密程序）</p>
+<p>这里我由于看汇编实在是太累</p>
+<p><img src="/images/writeup/image-20220418160023586.png" alt="image-20220418160023586"></p>
+<p>我讲loc_8080720最后的jmp loc_8080360修改为jmp loc_8080980</p>
+<p><img src="/images/writeup/image-20220418160138365.png" alt="image-20220418160138365"></p>
+<p>这样f5就能看到循环的反汇编了，很明显是XTEA；</p>
+<p>循环结束后会进入loc_80809c0</p>
+<p>这里是把我们加密后的密文放到flag的密文附近</p>
+<p>然后与密文进行比较，比较其实就是一开始反汇编内容的else</p>
+<p>本以为就是简单的XTEA，果然还是想多了</p>
+<p>再jmp rdi后会进行多个跳转才会进入rdi</p>
+<p>这里我使用内存断点对输入内容进行跟进，会发现一开始对输入内容进行了大小端转换然后进入一个加密算法</p>
+<p><img src="/images/writeup/image-20220418160822134.png" alt="image-20220418160822134"></p>
+<p>由于每个指令最后都使用jmp rdi来跳转，没法像刚刚一样偷懒修改程序然后F5，只能看汇编了，还好汇编程序内容不长</p>
+<p>t&#x3D;x1</p>
+<p>x1&#x3D;(t&lt;&lt;1&amp;t&lt;&lt;8)^(t&lt;&lt;2)^x0^key[i]</p>
+<p>x0&#x3D;t</p>
+<p>大概是这个算法</p>
+<p>逻辑明白后就是写解密算法了</p>
+<p><img src="/images/writeup/image-20220418161042557.png" alt="image-20220418161042557"></p>
+<p>算法并不完整（注意的是每次XTEA循环次数都不同，分别是2，4，8，16）</p>
 
         </div>
         <!-- .entry-content -->
@@ -417,36 +465,19 @@
       <div class="toc" style="background: none;"></div>
       <section class="post-squares nextprev">
         
-          
-            <div class="post-nepre half previous">
-          
-            <a href="/2022/04/18/starCTF/" rel="prev">
-              <div class="background">
-                <img class="lazyload" src="" data-src="/images/back/bo-of-circuits-wallpaper.jpg" style="width: 100%; height: 100%; object-fit: cover; pointer-events: none;" onerror="imgError(this,3)" src="/images/back/bo-of-circuits-wallpaper.jpg">
-              </div>
-              <span class="label">
-              Previous Post</span>
-              <div class="info">
-                <h3>
-                starCTF_RE方向的部分wp</h3>
-                <hr>
-              </div>
-            </a>
-          </div>
-        
         
           
-            <div class="post-nepre half next">
+            <div class="post-nepre full next">
           
-            <a href="/2022/04/14/crypto/" rel="next">
+            <a href="/2022/04/14/hello-world/" rel="next">
               <div class="background">
-                <img class="lazyload" src="" data-src="/images/back/demons-souls-wallpaper.jpg" style="width: 100%; height: 100%; object-fit: cover; pointer-events: none;" onerror="imgError(this,3)" src="/images/back/demons-souls-wallpaper.jpg">
+                <img class="lazyload" src="" data-src="/images/back/sun-line-wallpaper.jpg" style="width: 100%; height: 100%; object-fit: cover; pointer-events: none;" onerror="imgError(this,3)" src="/images/back/sun-line-wallpaper.jpg">
               </div>
               <span class="label">
               Next Post</span>
               <div class="info">
                 <h3>
-                crypto</h3>
+                Hello World</h3>
                 <hr>
               </div>
             </a>
