@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
   
-  <title itemprop="name">archive_a | KnowMeaning</title>
+  <title itemprop="name">mrctfwp | KnowMeaning</title>
   
     <link rel="shortcut icon" href="/images/favicon.ico">
   
@@ -352,208 +352,338 @@
   </div>
 </header>
 
-      <div class="blank" style="padding-top: 75px;">
-</div>
-<div id="content" class="site-content">
-  <div id="main">
-    <header class="page-header">
-      <h1 class="cat-title">
-      归档</h1>
-      <span class="cat-des">
-        <p>
-        Archives</p>
-      </span>
+      <link rel="stylesheet" type="text/css" href="/css/sharejs.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.css">
+<div class="pattern-center-blank"></div>
+
+  <div class="pattern-center single-center">
+    <!-- 有配图默认渲染第一张 -->
+    <div class="pattern-attachment-img lazyload" style="background-image: url(/images/back/lion-art-by-peri-priatna-wallpaper.jpg);" src="" data-src="/images/back/lion-art-by-peri-priatna-wallpaper.jpg">
+    </div>
+    <header class="pattern-header single-header">
+      <h1 class="entry-title">
+      mrctfwp</h1>
+      <p class="entry-census">
+        <span>
+          <a href="https://knowmeaning.github.io/">
+            <img src="/images/head.jpeg">
+          </a>
+        </span>
+        <span>
+          <a href="https://knowmeaning.github.io/">KnowMeaning</a>
+        </span>
+        <span class="bull">
+        ·</span>
+        2022-4-25<span class="bull">
+        ·</span>
+      <span id="busuanzi_value_page_pv"></span>次阅读</p>
     </header>
-    <div id="main-part">
-      <article class="art">
-        <div class="art-main">
-          <div class="art-content">
-            <div id="archives">
-              <p style="text-align:right;">
-                [<span id="al_expand_collapse" style="cursor: s-resize;">
-                全部展开/收缩</span>
-              ]</p>
-              
-              
-              
-              
-              
+  </div>
+
+<div id="content" class="site-content">
+  <div id="primary" class="content-area">
+    <main id="main" class="site-main" role="main">
+      <article id="post-1" class="post-1 post type-post status-publish format-standard has-post-thumbnail hentry category-uncategorized">
+        <div class="toc"></div>
+        <!--<div class="toc-entry-content"><!-- 套嵌目录使用（主要为了支援评论）-->
+        
+        <div class="entry-content">
+          <h2 id="Reverse"><a href="#Reverse" class="headerlink" title="Reverse"></a>Reverse</h2><h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>比赛总是需要反省，虽然这次比赛做出来两道（其中还有一个是二血），但是其他的题目却几乎都无从下手，除了最普通的PE文件和elf文件，遇到不了解的框架就没办法做题了，得去思考怎么解决问题。还有算是比较普遍的apk，由于一直专注于PE文件，没能花更多时间去学习APK逆向，算是自己时间安排或者是偷懒的问题吧</p>
+<h3 id="CICADA"><a href="#CICADA" class="headerlink" title="CICADA"></a>CICADA</h3><p>程序虽然没有检测出来壳，但是核心代码似乎是被加密了（这是叫SMC技术吗）</p>
+<p>放弃IDA，改使用x96dbg</p>
+<p>观察程序，会发现是用call rax跳转到核心代码（防止静态分析）</p>
+<p>第一个call rax之后会还原dll的链接库（可以看作是壳？）</p>
+<p>跟进第二个call rax，终于出现就来到程序的原始代码位置了，</p>
+<p>这里搜索字符串就能搜到!<img src="/images/writeup/image-20220425105213161.png" alt="image-20220425105213161"></p>
+<p>很显然，call 64C160就是核心的加密算法（地址会变化不一定call的是64C160）</p>
+<p>再网上就是输入字符串，是需要输入0x20长度的字符</p>
+<p><img src="/images/writeup/image-20220425105541752.png" alt="image-20220425105541752"></p>
+<p>然后会把ascii码变成16进制（如果输入大写字符会乱码，得输入小写）</p>
+<p>进入核心算法后会发现大量的call跳转（都指向一个地址），可见是参杂了大量的花指令</p>
+<p>没有想到比较合适的下断方式，只能凭借经验通过内存断点或硬件断点判断程序对</p>
+<p><img src="/images/writeup/image-20220425110052535.png" alt="image-20220425110052535"></p>
+<p>这一大串就是程序的核心加密算法，用了控制流的混淆，仔细观察会发现每一个jmp的后方都是一个运算符，所以接下来就是需要反复跟踪这段代码和观察寄存器内存判断程序的流程。（水平不够，不清楚更好的方法，只能硬逆了）</p>
+<p>流程：程序主要是16位数先分成4位一组，运行了x^(x&lt;&lt;3);</p>
+<p>再将变换后的16位数进行了一个16*16的矩阵算法；</p>
+<p>所以逆向算法就是线性代数解方程</p>
+<p>写程序不想动脑，就没写循环优化程序：</p>
+<pre><code class="python">if __name__ == &#39;__main__&#39;:
+    b = [0x41dc4, 0x33c67, 0x36e79, 0x47569, 0x30cb6, 0x3a143, 0x417df, 0x3edc2, 0x3c685, 0x3cfb4, 0x3ec38, 0x2d960, \
+        0x2aef0, 0x321b7, 0x3611a, 0x3333e]
+    k1 = [0xA5, 0xce, 0xb8, 0xbc, 0x99, 0xb7, 0xe9, 0xa0, 0xc1, 0xff, 0x14, 0x5c, 0x22, 0x66, 0x85, 0x51]
+    k2 = [0xa0, 0x0C, 0x70, 0x3e, 0x16, 0x34, 0x9a, 0x1c, 0xa6, 0x47, 0x56, 0x46, 0x4e, 0x1c, 0xb3, 0xdd]
+    k3 = [0xbc, 0x76, 0xf4, 0x6b, 0x64, 0xce, 0x40, 0xc6, 0xcf, 0x53, 0x9b, 0x38, 0x36, 0x30, 0x15, 0xdc]
+    k4 = [0x4f, 0x0d, 0x41, 0x4b, 0x67, 0xd8, 0xe9, 0x78, 0xB1, 0xc5, 0x00, 0xd9, 0xDe, 0x93, 0xd8, 0xc8]
+    k5 = [0xEd, 0x12, 0x96, 0x28, 0x45, 0xe2, 0xe2, 0x4b, 0x01, 0x7d, 0xe3, 0x13, 0x8b, 0x77, 0x6a, 0x58]
+    k6 = [0x6c, 0x05, 0x6d, 0x8a, 0x62, 0xbd, 0xb8, 0x98, 0xb3, 0x9c, 0xdf, 0x10, 0xc2, 0x4d, 0x77, 0x87]
+    k7 = [0xe0, 0xa8, 0x85, 0x3b, 0x64, 0x7a, 0x37, 0xf7, 0xfe, 0x84, 0xd2, 0x37, 0x48, 0xc6, 0xec, 0x8d]
+    k8 = [0x9e, 0xfd, 0xdb, 0x43, 0x30, 0x6a, 0x6d, 0x42, 0x55, 0xd5, 0xda, 0x32, 0x23, 0xd2, 0xf6, 0xe3]
+    k9 = [0x3c, 0x43, 0xab, 0xec, 0xea, 0x1e, 0xa7, 0x92, 0x6f, 0x70, 0x52, 0xeb, 0x96, 0xa2, 0x03, 0x43]
+    k10 = [0x8e, 0xfb, 0x73, 0xbe, 0xf8, 0x67, 0x72, 0x3f, 0x3f, 0x77, 0xd8, 0x89, 0x28, 0xa8, 0xbf, 0xa4]
+    k11 = [0xaa, 0xe8, 0xef, 0x83, 0xff, 0x56, 0x9a, 0xe3, 0xfb, 0x4a, 0x4a, 0x76, 0x9d, 0x95, 0x17, 0x41]
+    k12 = [0xe4, 0x0a, 0x1d, 0x42, 0xe3, 0x3d, 0x2d, 0x57, 0x18, 0x8a, 0xc3, 0x5b, 0xfa, 0x59, 0x38, 0x92]
+    k13 = [0xd1, 0xa1, 0x39, 0x47, 0xca, 0xab, 0x78, 0xb3, 0x4b, 0x19, 0xa1, 0x21, 0x84, 0x26, 0x90, 0x50]
+    k14 = [0x47, 0x2f, 0xc1, 0x19, 0x19, 0x73, 0x08, 0x51, 0x89, 0x17, 0x82, 0xf1, 0xc0, 0x6d, 0xcb, 0x74]
+    k15 = [0x5a, 0x75, 0x71, 0x81, 0x74, 0xa4, 0xa9, 0xca, 0x06, 0xe5, 0x41, 0x34, 0x74, 0xde, 0xd6, 0x38]
+    k16 = [0x5f, 0x74, 0x47, 0x89, 0xc1, 0x91, 0x69, 0xf7, 0x39, 0x24, 0xfd, 0x93, 0xa3, 0x6a, 0xdf, 0x14]
+    
+    x1=Real(&#39;x1&#39;)
+    x2 = Real(&#39;x2&#39;)
+    x3 = Real(&#39;x3&#39;)
+    x4 = Real(&#39;x4&#39;)
+    x5 = Real(&#39;x5&#39;)
+    x6 = Real(&#39;x6&#39;)
+    x7 = Real(&#39;x7&#39;)
+    x8 = Real(&#39;x8&#39;)
+    x9 = Real(&#39;x9&#39;)
+    x10 = Real(&#39;x10&#39;)
+    x11 = Real(&#39;x11&#39;)
+    x12 = Real(&#39;x12&#39;)
+    x13 = Real(&#39;x13&#39;)
+    x14 = Real(&#39;x14&#39;)
+    x15 = Real(&#39;x15&#39;)
+    x16 = Real(&#39;x16&#39;)
+    solver=Solver()
+    solver.add(
+        x1 * k1[0] + x2 * k1[1] + x3 * k1[2] + x4 * k1[3] + x5 * k1[4] + x6 * k1[5] + x7 * k1[6] + x8 * k1[7] + x9 * k1[
+            8] + x10 * k1[9] + x11 * k1[10] + x12 * k1[11] + x13 * k1[12] + x14 * k1[13] + x15 * k1[14] + x16 * k1[
+            15] == b[0])
+    solver.add(
+        x1 * k2[0] + x2 * k2[1] + x3 * k2[2] + x4 * k2[3] + x5 * k2[4] + x6 * k2[5] + x7 * k2[6] + x8 * k2[7] + x9 * k2[
+            8] + x10 * k2[9] + x11 * k2[10] + x12 * k2[11] + x13 * k2[12] + x14 * k2[13] + x15 * k2[14] + x16 * k2[
+            15] == b[1])
+    solver.add(
+        x1 * k3[0] + x2 * k3[1] + x3 * k3[2] + x4 * k3[3] + x5 * k3[4] + x6 * k3[5] + x7 * k3[6] + x8 * k3[7] + x9 * k3[
+            8] + x10 * k3[9] + x11 * k3[10] + x12 * k3[11] + x13 * k3[12] + x14 * k3[13] + x15 * k3[14] + x16 * k3[
+            15] == b[2])
+    solver.add(
+        x1 * k4[0] + x2 * k4[1] + x3 * k4[2] + x4 * k4[3] + x5 * k4[4] + x6 * k4[5] + x7 * k4[6] + x8 * k4[7] + x9 * k4[
+            8] + x10 * k4[9] + x11 * k4[10] + x12 * k4[11] + x13 * k4[12] + x14 * k4[13] + x15 * k4[14] + x16 * k4[
+            15] == b[3])
+    solver.add(
+        x1 * k5[0] + x2 * k5[1] + x3 * k5[2] + x4 * k5[3] + x5 * k5[4] + x6 * k5[5] + x7 * k5[6] + x8 * k5[7] + x9 * k5[
+            8] + x10 * k5[9] + x11 * k5[10] + x12 * k5[11] + x13 * k5[12] + x14 * k5[13] + x15 * k5[14] + x16 * k5[
+            15] == b[4])
+    solver.add(
+        x1 * k6[0] + x2 * k6[1] + x3 * k6[2] + x4 * k6[3] + x5 * k6[4] + x6 * k6[5] + x7 * k6[6] + x8 * k6[7] + x9 * k6[
+            8] + x10 * k6[9] + x11 * k6[10] + x12 * k6[11] + x13 * k6[12] + x14 * k6[13] + x15 * k6[14] + x16 * k6[
+            15] == b[5])
+    solver.add(
+        x1 * k7[0] + x2 * k7[1] + x3 * k7[2] + x4 * k7[3] + x5 * k7[4] + x6 * k7[5] + x7 * k7[6] + x8 * k7[7] + x9 * k7[
+            8] + x10 * k7[9] + x11 * k7[10] + x12 * k7[11] + x13 * k7[12] + x14 * k7[13] + x15 * k7[14] + x16 * k7[
+            15] == b[6])
+    solver.add(
+        x1 * k8[0] + x2 * k8[1] + x3 * k8[2] + x4 * k8[3] + x5 * k8[4] + x6 * k8[5] + x7 * k8[6] + x8 * k8[7] + x9 * k8[
+            8] + x10 * k8[9] + x11 * k8[10] + x12 * k8[11] + x13 * k8[12] + x14 * k8[13] + x15 * k8[14] + x16 * k8[
+            15] == b[7])
+    solver.add(
+        x1 * k9[0] + x2 * k9[1] + x3 * k9[2] + x4 * k9[3] + x5 * k9[4] + x6 * k9[5] + x7 * k9[6] + x8 * k9[7] + x9 * k9[
+            8] + x10 * k9[9] + x11 * k9[10] + x12 * k9[11] + x13 * k9[12] + x14 * k9[13] + x15 * k9[14] + x16 * k9[
+            15] == b[8])
+    solver.add(
+        x1 * k10[0] + x2 * k10[1] + x3 * k10[2] + x4 * k10[3] + x5 * k10[4] + x6 * k10[5] + x7 * k10[6] + x8 * k10[
+            7] + x9 * k10[8] + x10 * k10[9] + x11 * k10[10] + x12 * k10[11] + x13 * k10[12] + x14 * k10[13] + x15 * k10[
+            14] + x16 * k10[15] == b[9])
+    solver.add(
+        x1 * k11[0] + x2 * k11[1] + x3 * k11[2] + x4 * k11[3] + x5 * k11[4] + x6 * k11[5] + x7 * k11[6] + x8 * k11[
+            7] + x9 * k11[8] + x10 * k11[9] + x11 * k11[10] + x12 * k11[11] + x13 * k11[12] + x14 * k11[13] + x15 * k11[
+            14] + x16 * k11[15] == b[10])
+    solver.add(
+        x1 * k12[0] + x2 * k12[1] + x3 * k12[2] + x4 * k12[3] + x5 * k12[4] + x6 * k12[5] + x7 * k12[6] + x8 * k12[
+            7] + x9 * k12[8] + x10 * k12[9] + x11 * k12[10] + x12 * k12[11] + x13 * k12[12] + x14 * k12[13] + x15 * k12[
+            14] + x16 * k12[15] == b[11])
+    solver.add(
+        x1 * k13[0] + x2 * k13[1] + x3 * k13[2] + x4 * k13[3] + x5 * k13[4] + x6 * k13[5] + x7 * k13[6] + x8 * k13[
+            7] + x9 * k13[8] + x10 * k13[9] + x11 * k13[10] + x12 * k13[11] + x13 * k13[12] + x14 * k13[13] + x15 * k13[
+            14] + x16 * k13[15] == b[12])
+    solver.add(
+        x1 * k14[0] + x2 * k14[1] + x3 * k14[2] + x4 * k14[3] + x5 * k14[4] + x6 * k14[5] + x7 * k14[6] + x8 * k14[
+            7] + x9 * k14[8] + x10 * k14[9] + x11 * k14[10] + x12 * k14[11] + x13 * k14[12] + x14 * k14[13] + x15 * k14[
+            14] + x16 * k14[15] == b[13])
+    solver.add(
+        x1 * k15[0] + x2 * k15[1] + x3 * k15[2] + x4 * k15[3] + x5 * k15[4] + x6 * k15[5] + x7 * k15[6] + x8 * k15[
+            7] + x9 * k15[8] + x10 * k15[9] + x11 * k15[10] + x12 * k15[11] + x13 * k15[12] + x14 * k15[13] + x15 * k15[
+            14] + x16 * k15[15] == b[14])
+    solver.add(
+        x1 * k16[0] + x2 * k16[1] + x3 * k16[2] + x4 * k16[3] + x5 * k16[4] + x6 * k16[5] + x7 * k16[6] + x8 * k16[
+            7] + x9 * k16[8] + x10 * k16[9] + x11 * k16[10] + x12 * k16[11] + x13 * k16[12] + x14 * k16[13] + x15 * k16[
+            14] + x16 * k16[15] == b[15])
+    if solver.check()==sat:
+        print(solver.model())
+</code></pre>
+<p>然后对得到的16个数字组合成4组数字：BE5A0593、43BC0D15、B13760BC、C588A55A</p>
+<p>每组解密（一样偷懒没写循环）</p>
+<pre><code class="c++">unsigned int i = 0xC588A55A;
+    unsigned int front3 = 0;
+    i = i ^ 3;
+    int back3 = (i &lt;&lt; 29) &gt;&gt; 29;
+    unsigned int total;
+
+    total = back3 ^ 0;
+    cout &lt;&lt; hex &lt;&lt; total &lt;&lt; endl;
+    front3 = ((i &lt;&lt; 26) &gt;&gt; 26) &gt;&gt; 3;
+    front3 = back3 ^ front3;
+    total = total + (front3 &lt;&lt; 3);
+    back3 = front3;
+    cout &lt;&lt; hex &lt;&lt; total &lt;&lt; endl;
+    front3= ((i &lt;&lt; 23) &gt;&gt; 23) &gt;&gt; 6;
+    front3 = back3 ^ front3;
+    total = total + (front3 &lt;&lt; 6);
+    back3 = front3;
+    cout &lt;&lt; hex &lt;&lt; total &lt;&lt; endl;
+    front3 = ((i &lt;&lt; 20) &gt;&gt; 20) &gt;&gt; 9;
+    front3 = back3 ^ front3;
+    total = total + (front3 &lt;&lt; 9);
+    back3 = front3;
+    cout &lt;&lt; hex &lt;&lt; total &lt;&lt; endl;
+    front3 = ((i &lt;&lt; 17) &gt;&gt; 17) &gt;&gt; 12;
+    front3 = back3 ^ front3;
+    total = total + (front3 &lt;&lt; 12);
+    back3 = front3;
+    cout &lt;&lt; hex &lt;&lt; total &lt;&lt; endl;
+    front3 = ((i &lt;&lt; 14) &gt;&gt; 14) &gt;&gt; 15;
+    front3 = back3 ^ front3;
+    total = total + (front3 &lt;&lt; 15);
+    back3 = front3;
+    cout &lt;&lt; hex &lt;&lt; total &lt;&lt; endl;
+    front3 = ((i &lt;&lt; 11) &gt;&gt; 11) &gt;&gt; 18;
+    front3 = back3 ^ front3;
+    total = total + (front3 &lt;&lt; 18);
+    back3 = front3;
+    cout &lt;&lt; hex &lt;&lt; total &lt;&lt; endl;
+    front3 = ((i &lt;&lt; 8) &gt;&gt; 8) &gt;&gt; 21;
+    front3 = back3 ^ front3;
+    total = total + (front3 &lt;&lt; 21);
+    back3 = front3;
+
+    front3 = ((i &lt;&lt; 5) &gt;&gt; 5) &gt;&gt; 24;
+    front3 = back3 ^ front3;
+    total = total + (front3 &lt;&lt; 24);
+    back3 = front3;
+    
+    front3 = ((i &lt;&lt; 2) &gt;&gt; 2) &gt;&gt; 27;
+    front3 = back3 ^ front3;
+    total = total + (front3 &lt;&lt; 27);
+    back3 = front3;
+
+    front3 = i &gt;&gt; 30;
+    front3 = back3 ^ front3;
+    total = total + (front3 &lt;&lt; 30);
+    cout &lt;&lt; hex &lt;&lt; total &lt;&lt; endl;
+    unsigned int iiii = 0x14b0f25c;
+    unsigned int x = iiii ^ (iiii &lt;&lt; 3);
+    cout &lt;&lt; x;
+</code></pre>
+<p>得到flag:a3bcdbcb2dce48b486f9d6cead137bd1</p>
+<h3 id="old"><a href="#old" class="headerlink" title="old"></a>old</h3><p>开局迷之文件，但是使用linux的file指令能知道是NES游戏文件</p>
+<p>使用FCEUX打开</p>
+<p>根据游戏内提示，需要消灭44个怪和获得钥匙然后打开宝箱</p>
+<p>钥匙在第一个岔路口下方城堡里，宝箱在第一个岔路口右边</p>
+<p>（懒的修改直接就能找到，但是意外没那么轻松）</p>
+<p>跟踪数据发现消灭怪物数量在00C9地址（超过了也会失败，必须44）</p>
+<p><img src="/images/writeup/image-20220425111547568.png" alt="image-20220425111547568"></p>
+<p>果然不会这么简单，还需要输入flag验证</p>
+<p>输入的字符会存放在00AF-00BE中</p>
+<p><img src="/images/writeup/image-20220425111849737.png" alt="image-20220425111849737"></p>
+<p>输入数据会加密然后保存到069C</p>
+<p>观察上下两行，其实也很明白了，一串的key一串是密文，密文后面多出来一个0x29也会知道是加密部分，</p>
+<p>跟踪00AF的字符，会发现是与068c和06bc内容异或然后加上10存储到069c，其中06bc里内容每次加密一个字符后会加上0x29；</p>
+<p>最后比较前还会异或上一个0x6e再和06ac内容比较</p>
+<p>可以看作flag[]&#x3D;(input[]^x1[]^x2+10)^0x6e;</p>
+<p>解密脚本：</p>
+<pre><code class="c++">int k[] = &#123; 0x6D,0x72,0x63,0x74,0x66,0x5F,0x66,0x61,0x6B,0x65,0x5F,0x66,0x6C,0x61,0x67,0x21 &#125;;
+    int flag[] = &#123; 0x5C,0xEB,0xE8,0x9E,0x99,0xB3,0x5F,0x47,0x16,0xB7,0xD7,0xBB,0x35,0x20,0x0D,0x62 &#125;;
+    int m = 0x29;
+    for (int i = 0; i &lt; 16; i++) &#123;
+        int x = (((flag[i] ^ 0x6e) - 0x10) &amp; 0xff) ^ k[i] ^ m;
+        m = (m + 0x29) &amp; 0xFF;
+        cout &lt;&lt; hex &lt;&lt; x &lt;&lt; endl;
+    &#125;
+</code></pre>
+
+        </div>
+        <!-- .entry-content -->
+        <div class="single-reward">
+          <div class="reward-open">赏
+            <div class="reward-main">
+              <ul class="reward-row">
                 
-                <h3 class="al_year">2022年</h3>
-              
-              
-                
-                <ul class="al_mon_list">
-                  <li class="al_li">
-                    <span class="al_mon" style="cursor: s-resize;">
-                      04月(<span id="post-num">
-                      3</span>
-                    篇文章)</span>
-                    <ul class="al_post_list" style="">
-              
-                      <li>
-                        <a href="/2022/04/25/mrctfwp/">
-                          <span style="color:#0bf;">
-                          25日08:00:46</span>
-                          mrctfwp
-                        </a>
-                      </li>
-                      
-              
-              
-              
-              
-              
-                      <li>
-                        <a href="/2022/04/18/starCTF/">
-                          <span style="color:#0bf;">
-                          18日14:22:00</span>
-                          starCTF_RE方向的部分wp
-                        </a>
-                      </li>
-                      
-              
-              
-              
-              
-              
-                      <li>
-                        <a href="/2022/04/14/hello-world/">
-                          <span style="color:#0bf;">
-                          14日12:34:44</span>
-                          Hello World
-                        </a>
-                      </li>
-                      
-              
-              
-              
-              
-              
-                      <li>
-                        <a href="/2022/04/14/crypto/">
-                          <span style="color:#0bf;">
-                          14日12:17:44</span>
-                          crypto
-                        </a>
-                      </li>
-                      
-              
-              
-              
-              
-              
-                      <li>
-                        <a href="/2022/04/14/misc/">
-                          <span style="color:#0bf;">
-                          14日12:17:36</span>
-                          misc
-                        </a>
-                      </li>
-                      
-              
-              
-              
-              
-              
-                      <li>
-                        <a href="/2022/04/14/pwn/">
-                          <span style="color:#0bf;">
-                          14日12:17:32</span>
-                          pwn
-                        </a>
-                      </li>
-                      
-              
-              
-              
-              
-              
-                      <li>
-                        <a href="/2022/04/14/web/">
-                          <span style="color:#0bf;">
-                          14日12:17:15</span>
-                          web
-                        </a>
-                      </li>
-                      
-              
-              
-              
-              
-              
-                      <li>
-                        <a href="/2022/04/14/other/">
-                          <span style="color:#0bf;">
-                          14日12:14:20</span>
-                          other
-                        </a>
-                      </li>
-                      
-              
-              
-              
-              
-              
-                      <li>
-                        <a href="/2022/04/14/english/">
-                          <span style="color:#0bf;">
-                          14日12:11:29</span>
-                          english
-                        </a>
-                      </li>
-                      
-              
-              
-              
-              
-              
-                      <li>
-                        <a href="/2022/04/14/share/">
-                          <span style="color:#0bf;">
-                          14日11:46:20</span>
-                          share
-                        </a>
-                      </li>
-                      
-              
-              
-              
-              
-              
-                      <li>
-                        <a href="/2022/04/14/exploitation/">
-                          <span style="color:#0bf;">
-                          14日11:44:09</span>
-                          exploitation
-                        </a>
-                      </li>
-                      
-              
-              
-              
-              
-              
-                      <li>
-                        <a href="/2022/04/14/security/">
-                          <span style="color:#0bf;">
-                          14日11:37:40</span>
-                          security
-                        </a>
-                      </li>
-                      
-                    </ul>
-                  </li>
-                </ul>
-              
-              
+              </ul>
             </div>
           </div>
         </div>
+        <div style="text-align:center; width: 100%" class="social-share share-mobile" data-disabled="diandian, tencent"></div>
+        <footer class="post-footer">
+          <div class="post-lincenses"><a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="nofollow"><i class="fa fa-creative-commons" aria-hidden="true"></i> 知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议</a></div>
+          <div class="post-tags">
+          </div>
+          <div class="post-share">
+            <div class="social-share sharehidden share-component"></div>
+            <i class="iconfont show-share icon-forward"></i>
+          </div>
+        </footer><!-- .entry-footer -->
       </article>
-    </div>
-  </div>
+      <!-- #post-## -->
+      <div class="toc" style="background: none;"></div>
+      <section class="post-squares nextprev">
+        
+        
+          
+            <div class="post-nepre full next">
+          
+            <a href="/2022/04/18/starCTF/" rel="next">
+              <div class="background">
+                <img class="lazyload" src="" data-src="/images/back/bo-of-circuits-wallpaper.jpg" style="width: 100%; height: 100%; object-fit: cover; pointer-events: none;" onerror="imgError(this,3)" src="/images/back/bo-of-circuits-wallpaper.jpg">
+              </div>
+              <span class="label">
+              Next Post</span>
+              <div class="info">
+                <h3>
+                starCTF_RE方向的部分wp</h3>
+                <hr>
+              </div>
+            </a>
+          </div>
+        
+      </section>
+      
+<script src="../js/av-min.js"></script>
+<script src="../js/Valine.min.js"></script>
+<div id="vcomments"></div>
+<script>
+  window.onload = function(){
+      var valine = new Valine();
+      valine.init({
+        el: '#vcomments',
+        appId: "2Ax66J4PNFSihlCwoUGbDhFr-gzGzoHsz",
+        appKey: "XvyIrOel1j4qmTqnDMFdBB4K",
+        path: window.location.pathname,
+        placeholder: "你是我一生只会遇见一次的惊喜 ...",
+      })
+  }
+</script>
+
+
+
+
+      <section class="author-profile">
+        <div class="info" itemprop="author" itemscope="" itemtype="https://schema.org/Person">
+          <a href="https://knowmeaning.github.io/" class="profile gravatar"><img src="/images/head.jpeg" itemprop="image" alt="KnowMeaning" height="70" width="70"></a>
+          <div class="meta">
+            <span class="title">Author</span>
+            <h3 itemprop="name">
+            <a href="https://knowmeaning.github.io/" itemprop="url" rel="author">KnowMeaning</a>
+            </h3>
+          </div>
+        </div>
+        <hr>
+        <p><i class="iconfont icon-write"></i>努力学习逆向</p>
+      </section>
+    </main><!-- #main -->
+  </div><!-- #primary -->
 </div>
+
+
 
     </div>    
     <div class="ins-search">
