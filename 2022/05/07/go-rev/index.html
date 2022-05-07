@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
   
-  <title itemprop="name">KnowMeaning</title>
+  <title itemprop="name">go语言逆向-raffle题目wp | KnowMeaning</title>
   
     <link rel="shortcut icon" href="/images/favicon.ico">
   
@@ -352,475 +352,251 @@
   </div>
 </header>
 
-      <div class="blank" style="padding-top: 0px;"></div>
+      <link rel="stylesheet" type="text/css" href="/css/sharejs.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.css">
+<div class="pattern-center-blank"></div>
+
+  <div class="pattern-center single-center">
+    <!-- 有配图默认渲染第一张 -->
+    <div class="pattern-attachment-img lazyload" style="background-image: url(/image/back/wallpaper_space_hunter_3_01_1920x1080.jpg);" src="" data-src="/image/back/wallpaper_space_hunter_3_01_1920x1080.jpg">
+    </div>
+    <header class="pattern-header single-header">
+      <h1 class="entry-title">
+      go语言逆向-raffle题目wp</h1>
+      <p class="entry-census">
+        <span>
+          <a href="https://knowmeaning.github.io/">
+            <img src="/images/head.jpeg">
+          </a>
+        </span>
+        <span>
+          <a href="https://knowmeaning.github.io/">KnowMeaning</a>
+        </span>
+        <span class="bull">
+        ·</span>
+        2022-5-7<span class="bull">
+        ·</span>
+      <span id="busuanzi_value_page_pv"></span>次阅读</p>
+    </header>
+  </div>
+
 <div id="content" class="site-content">
-  
-  <div class="notice" style="margin-top:60px">
-    <i class="iconfont icon-notification">
-    </i>
-    <div class="notice-content">正在努力学习逆向的KnowMeaning！</div>
-  </div>
-  
-  <div class="top-feature-row">
-  <h1 class="fes-title" style="font-family: 'Ubuntu', sans-serif;">
-  <i class="fa fa-anchor" aria-hidden="true">
-  </i>
-  START:DASH!!</h1>
-  
-  <div class="top-feature-v2">
-    <div class="the-feature square from_left_and_right">
-      <a href="https://www.52pojie.cn/" target="_blank">
-        <div class="img">
-          <img src="/images/back/asterism-technology-wallpaper.jpg">
-        </div>
-        <div class="info">
-          <h3>52pojie</h3>
-          <p>论坛</p>
-        </div>
-      </a>
-    </div>
-  </div>
-  
-  <div class="top-feature-v2">
-    <div class="the-feature square from_left_and_right">
-      <a href="https://crackmes.one/" target="_blank">
-        <div class="img">
-          <img src="/images/back/a-dryad-boy-looking-at-a-river-in-a-forest-wallpaper.jpg">
-        </div>
-        <div class="info">
-          <h3>Crackmes.one</h3>
-          <p>题库</p>
-        </div>
-      </a>
-    </div>
-  </div>
-  
-  <div class="top-feature-v2">
-    <div class="the-feature square from_left_and_right">
-      <a href="https://buuoj.cn/" target="_blank">
-        <div class="img">
-          <img src="/images/back/earths-encounter-with-a-black-hole-wallpaper.jpg">
-        </div>
-        <div class="info">
-          <h3>Buuctf</h3>
-          <p>学习</p>
-        </div>
-      </a>
-    </div>
-  </div>
-  
-</div>
   <div id="primary" class="content-area">
     <main id="main" class="site-main" role="main">
-      <h1 class="main-title" style="font-family: 'Ubuntu', sans-serif;">
-      <i class="fa fa-envira" aria-hidden="true"></i>
-      Discovery</h1>
+      <article id="post-1" class="post-1 post type-post status-publish format-standard has-post-thumbnail hentry category-uncategorized">
+        <div class="toc"></div>
+        <!--<div class="toc-entry-content"><!-- 套嵌目录使用（主要为了支援评论）-->
+        
+        <div class="entry-content">
+          <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>队里师傅给的题目，十分有意思，是我之前很少接触的go语言逆向，借此也学到了不少go语言的知识</p>
+<h3 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h3><p>IDA打开的main函数就是主要函数，题目并没有去除大多数符号，能很清楚看清基础逻辑。</p>
+<p>开头两个判断是判断是否有包含参数且参数是否为45位长度</p>
+<p>loc_491C78下就是加密部分</p>
+<p>加密结束后call runtime_memequal与key进行比较</p>
+<pre><code class="汇编">loc_491C78:
+lea     rax, main_wg
+mov     [rsp+0B8h+var_B8], rax
+mov     [rsp+0B8h+var_B0], 27h ; &#39;&#39;&#39;
+call    sync___WaitGroup__Add
+mov     dword ptr [rsp+0B8h+var_B8], 0
+lea     rax, off_4CDC68
+mov     [rsp+0B8h+var_B0], rax
+call    runtime_newproc
+mov     dword ptr [rsp+0B8h+var_B8], 0
+lea     rax, off_4CDBC0
+mov     [rsp+0B8h+var_B0], rax
+call    runtime_newproc
+mov     dword ptr [rsp+0B8h+var_B8], 0
+lea     rax, off_4CDBD0
+mov     [rsp+0B8h+var_B0], rax
+call    runtime_newproc
+lea     rax, main_wg
+mov     [rsp+0B8h+var_B8], rax
+call    sync___WaitGroup__Wait
+mov     rax, cs:qword_566608
+mov     rcx, cs:main_input
+cmp     rax, 2Dh ; &#39;-&#39;
+jz      loc_491E26
+</code></pre>
+<p>通过符号可以知道题目是使用并发的功能隐藏了加密算法，使用runtime_newproc生成加密函数的模块，然后使用sync___WaitGroup来等待并发程序完成加密。</p>
+<p>进入runtime_newproc生成的函数里面发现还生成了新的加密函数模块</p>
+<p>最外面有三个模块，三个模块中每个都还包含三个模块，新的三个模块里也包含三个模块</p>
+<p>所以总共有3+9+27&#x3D;39个模块</p>
+<p>这里并没有搞清楚模块之间运行的具体顺序，依靠动态调试了解到大致是312的顺序来调用模块（没理解为什么，go是开源的语言，有机会可以研究）顺序如下</p>
+<pre><code>funtion3
+    funtion3_3
+        funtion3_3_3
+funtion1
+    funtion1_3
+        funtion1_3_3
+funtion2
+    funtion2_3
+        funtion2_3_3
+funtion3_1
+    funtion3_1_3
+funtion3_2
+    funtion3_2_3
+funtion3_3_1
+funtion3_3_2
+funtion1_1
+    funtion1_1_3
+funtion1_2
+    funtion1_2_3
+funtion1_3_1
+    funtion1_3_2
+funtion2_1
+    funtion2_1_3
+funtion2_2
+    funtion2_2_3
+        funtion2_3_1
+            funtion2_3_2
+funtion3_1_1
+    funtion3_1_2
+        funtion3_2_1
+            funtion3_2_2
+funtion1_1_1
+    funtion1_1_2
+funtion1_2_1
+    funtion1_2_2
+funtion2_1_1
+    funtion2_1_2
+funtion2_2_1
+    funtion2_2_2
+（加入的退格是想看看顺序的规律）
+</code></pre>
+<p>依据顺序，会发现其实都是简单的加减乘除和异或，依靠z3可以比较简单的获得flag</p>
+<p>这里贴上部分代码</p>
+<pre><code>    solver=Solver()
+    solver.add((((x0^(x33-57))*(-53))+12)==k[0])
+    solver.add((((x1-108)^((x44*29)^((x19+58)*103)))*91)==k[1])
+    solver.add(((x2^(x26*(-15)))-118)==k[2])
+    solver.add((((x3*85)-29)^(((x0^(x33-57))*(-53))+12))==k[3])
+    solver.add(((x4^((x20+122)^(x8^(x11^(x24*(-81))))))*(-101))==k[4])
+    solver.add(((((((x5-71)+67)^x7)*(-29))-75)-111)==k[5])
+    solver.add((((x6-87)^x17)*27)==k[6])
+    solver.add((((x7*(-77))^((x19+58)*103))+39)==k[7])
+    solver.add((((x8^(x11^(x24*(-81))))*(-71))-105)==k[8])
+    solver.add((((x9*(-35))-35)^x0)==k[9])
+    solver.add((((x10+14)*(-47))-118)==k[10])
+    solver.add(((x11^(x24*(-81)))^((x41^x43)+45))==k[11])
+    solver.add(((x12^x35)*119)==k[12])
+    solver.add((((x13^(x44*29))-40)-51)==k[13])
+    solver.add((((x14+78)*(-47))^(x29*123))==k[14])
+    solver.add((x15^(x8^(x11^(x24*(-81)))))==k[15])
+    solver.add((((x16-69)*87)^(x6-87))==k[16])
+    solver.add((x17*29)==k[17])
+    solver.add(((x18^x19)+79)==k[18])
+    solver.add(((x19+58)*103)==k[19])
+    solver.add((((x20+122)^(x8^(x11^(x24*(-81)))))*(-9))==k[20])
+    solver.add((((x21*9)+103)^((x4^((x20+122)^(x8^(x11^(x24*(-81))))))*(-101)))==k[21])
+    solver.add((((x22*87)-48)^((((x5-71)+67)^x7)*(-29)))==k[22])#wrong
+    solver.add((x23^((x10+14)*(-47)))==k[23])
+    solver.add(((x24*(-81))+36)==k[24])
+    solver.add((((x25^x19)-104)*(-91))==k[25])
+    solver.add(((x26*(-15))+51)==k[26])
+    solver.add((((x27*11)^((x41^x43)+45))^(x1-108))==k[27])
+    solver.add((((x28^x6)^(x26*(-15)))*101)==k[28])
+    solver.add((x29*123)==k[29])
+    solver.add((((x30*85)^(x11^(x24*(-81))))+83)==k[30])
+    solver.add(((((x31+29)*(-29))+13)^((x18^x19)+79))==k[31])
+    solver.add(((x32*(-51))-3)==k[32])
+    solver.add((((x33-57)*33)-119)==k[33])
+    solver.add((((x34*99)+78)^x19)==k[34])
+    solver.add(((x35+12)^((x42^x4)*125))==k[35])
+    solver.add((((x36-66)*21)^((x1-108)^((x44*29)^((x19+58)*103))))==k[36])
+    solver.add(((x37*61)^(x0^(x33-57)))==k[37])
+    solver.add(((((x38*49)+3)*35)^((x22*87)-48))==k[38])#wrong
+    solver.add(((x39^x36)+26)==k[39])
+    solver.add((((x40*109)^((x0^(x33-57))*(-53)))+120)==k[40])
+    solver.add(((x41^x43)+45)==k[41])
+    solver.add(((((x42^x4)*125)-88)-65)==k[42])
+    solver.add((x43^((x35+12)^((x42^x4)*125)))==k[43])
+    solver.add(((x44*29)^((x19+58)*103))==k[44])
+</code></pre>
+
+        </div>
+        <!-- .entry-content -->
+        <div class="single-reward">
+          <div class="reward-open">赏
+            <div class="reward-main">
+              <ul class="reward-row">
+                
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div style="text-align:center; width: 100%" class="social-share share-mobile" data-disabled="diandian, tencent"></div>
+        <footer class="post-footer">
+          <div class="post-lincenses"><a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="nofollow"><i class="fa fa-creative-commons" aria-hidden="true"></i> 知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议</a></div>
+          <div class="post-tags">
+          </div>
+          <div class="post-share">
+            <div class="social-share sharehidden share-component"></div>
+            <i class="iconfont show-share icon-forward"></i>
+          </div>
+        </footer><!-- .entry-footer -->
+      </article>
+      <!-- #post-## -->
+      <div class="toc" style="background: none;"></div>
+      <section class="post-squares nextprev">
+        
+        
+          
+            <div class="post-nepre full next">
+          
+            <a href="/2022/05/04/angr/" rel="next">
+              <div class="background">
+                <img class="lazyload" src="" data-src="" style="width: 100%; height: 100%; object-fit: cover; pointer-events: none;" onerror="imgError(this,3)" src="">
+              </div>
+              <span class="label">
+              Next Post</span>
+              <div class="info">
+                <h3>
+                angr</h3>
+                <hr>
+              </div>
+            </a>
+          </div>
+        
+      </section>
       
-  <!-- 首页默认取最最新文章集 -->
-  
-    
-<article  class="post post-list-thumb post-list-thumb-left"  class="post post-list-thumb" itemscope="" itemtype="https://schema.org/BlogPosting">
+<script src="../js/av-min.js"></script>
+<script src="../js/Valine.min.js"></script>
+<div id="vcomments"></div>
+<script>
+  window.onload = function(){
+      var valine = new Valine();
+      valine.init({
+        el: '#vcomments',
+        appId: "2Ax66J4PNFSihlCwoUGbDhFr-gzGzoHsz",
+        appKey: "XvyIrOel1j4qmTqnDMFdBB4K",
+        path: window.location.pathname,
+        placeholder: "你是我一生只会遇见一次的惊喜 ...",
+      })
+  }
+</script>
 
-  <div class="post-thumb">
-    <a href="/2022/05/07/go-rev/">
-      <img class="lazyload" onerror="imgError(this,3)" src="" data-src="/image/back/wallpaper_space_hunter_3_01_1920x1080.jpg">
-    </a>
-  </div>
-  <div class="post-content-wrap">
-    <div class="post-content">
-      <div class="post-date">
-        <i class="iconfont icon-time">
-        </i>2022-5-7 09:05</div>
-      <a href="/2022/05/07/go-rev/" class="post-title">
-        <h3>go语言逆向-raffle题目wp</h3>
-      </a>
-      <div class="post-meta">
-        <span><i class="fa fa-tags"></i>
-        
-            <a href="/tags/RE/">RE<em>·</em></a>
-          
-        </span>
-        <span>
-          <i class="iconfont icon-file"></i>
-          
-        </span>
-      </div>
-      <div class="float-content">
-        <p>WP</p>
-        <div class="post-bottom">
-          <a href="/2022/05/07/go-rev/" class="button-normal">
-            <i class="iconfont icon-caidan"></i>
-          </a>
+
+
+
+      <section class="author-profile">
+        <div class="info" itemprop="author" itemscope="" itemtype="https://schema.org/Person">
+          <a href="https://knowmeaning.github.io/" class="profile gravatar"><img src="/images/head.jpeg" itemprop="image" alt="KnowMeaning" height="70" width="70"></a>
+          <div class="meta">
+            <span class="title">Author</span>
+            <h3 itemprop="name">
+            <a href="https://knowmeaning.github.io/" itemprop="url" rel="author">KnowMeaning</a>
+            </h3>
+          </div>
         </div>
-      </div>
-    </div>
-  </div>
-</article>
-  
-    
-<article  class="post post-list-thumb" itemscope="" itemtype="https://schema.org/BlogPosting">
-
-  <div class="post-thumb">
-    <a href="/2022/05/04/angr/">
-      <img class="lazyload" onerror="imgError(this,3)" src="" data-src="https://cdn.jsdelivr.net/gh/honjun/cdn@1.6/img/other/image-404.png">
-    </a>
-  </div>
-  <div class="post-content-wrap">
-    <div class="post-content">
-      <div class="post-date">
-        <i class="iconfont icon-time">
-        </i>2022-5-4 21:05</div>
-      <a href="/2022/05/04/angr/" class="post-title">
-        <h3>angr</h3>
-      </a>
-      <div class="post-meta">
-        <span><i class="fa fa-tags"></i>
-        
-            <a href="/tags/RE/">RE<em>·</em></a>
-          
-        </span>
-        <span>
-          <i class="iconfont icon-file"></i>
-          
-        </span>
-      </div>
-      <div class="float-content">
-        <p>WP</p>
-        <div class="post-bottom">
-          <a href="/2022/05/04/angr/" class="button-normal">
-            <i class="iconfont icon-caidan"></i>
-          </a>
-        </div>
-      </div>
-    </div>
-  </div>
-</article>
-  
-    
-<article  class="post post-list-thumb post-list-thumb-left"  class="post post-list-thumb" itemscope="" itemtype="https://schema.org/BlogPosting">
-
-  <div class="post-thumb">
-    <a href="/2022/04/25/mrctfwp/">
-      <img class="lazyload" onerror="imgError(this,3)" src="" data-src="/images/back/lion-art-by-peri-priatna-wallpaper.jpg">
-    </a>
-  </div>
-  <div class="post-content-wrap">
-    <div class="post-content">
-      <div class="post-date">
-        <i class="iconfont icon-time">
-        </i>2022-4-25 08:04</div>
-      <a href="/2022/04/25/mrctfwp/" class="post-title">
-        <h3>mrctfwp</h3>
-      </a>
-      <div class="post-meta">
-        <span><i class="fa fa-tags"></i>
-        
-            <a href="/tags/RE/">RE<em>·</em></a>
-          
-        </span>
-        <span>
-          <i class="iconfont icon-file"></i>
-          
-        </span>
-      </div>
-      <div class="float-content">
-        <p>WP</p>
-        <div class="post-bottom">
-          <a href="/2022/04/25/mrctfwp/" class="button-normal">
-            <i class="iconfont icon-caidan"></i>
-          </a>
-        </div>
-      </div>
-    </div>
-  </div>
-</article>
-  
-    
-<article  class="post post-list-thumb" itemscope="" itemtype="https://schema.org/BlogPosting">
-
-  <div class="post-thumb">
-    <a href="/2022/04/18/starCTF/">
-      <img class="lazyload" onerror="imgError(this,3)" src="" data-src="/images/back/bo-of-circuits-wallpaper.jpg">
-    </a>
-  </div>
-  <div class="post-content-wrap">
-    <div class="post-content">
-      <div class="post-date">
-        <i class="iconfont icon-time">
-        </i>2022-4-18 14:04</div>
-      <a href="/2022/04/18/starCTF/" class="post-title">
-        <h3>starCTF_RE方向的部分wp</h3>
-      </a>
-      <div class="post-meta">
-        <span><i class="fa fa-tags"></i>
-        
-            <a href="/tags/RE/">RE<em>·</em></a>
-          
-        </span>
-        <span>
-          <i class="iconfont icon-file"></i>
-          
-        </span>
-      </div>
-      <div class="float-content">
-        <p>WP</p>
-        <div class="post-bottom">
-          <a href="/2022/04/18/starCTF/" class="button-normal">
-            <i class="iconfont icon-caidan"></i>
-          </a>
-        </div>
-      </div>
-    </div>
-  </div>
-</article>
-  
-    
-<article  class="post post-list-thumb post-list-thumb-left"  class="post post-list-thumb" itemscope="" itemtype="https://schema.org/BlogPosting">
-
-  <div class="post-thumb">
-    <a href="/2022/04/14/hello-world/">
-      <img class="lazyload" onerror="imgError(this,3)" src="" data-src="/images/back/sun-line-wallpaper.jpg">
-    </a>
-  </div>
-  <div class="post-content-wrap">
-    <div class="post-content">
-      <div class="post-date">
-        <i class="iconfont icon-time">
-        </i>2022-4-14 12:04</div>
-      <a href="/2022/04/14/hello-world/" class="post-title">
-        <h3>Hello World</h3>
-      </a>
-      <div class="post-meta">
-        <span><i class="fa fa-tags"></i>
-        
-        </span>
-        <span>
-          <i class="iconfont icon-file"></i>
-          
-        </span>
-      </div>
-      <div class="float-content">
-        <p>测试</p>
-        <div class="post-bottom">
-          <a href="/2022/04/14/hello-world/" class="button-normal">
-            <i class="iconfont icon-caidan"></i>
-          </a>
-        </div>
-      </div>
-    </div>
-  </div>
-</article>
-  
-    
-<article  class="post post-list-thumb" itemscope="" itemtype="https://schema.org/BlogPosting">
-
-  <div class="post-thumb">
-    <a href="/2022/04/14/crypto/">
-      <img class="lazyload" onerror="imgError(this,3)" src="" data-src="/images/back/demons-souls-wallpaper.jpg">
-    </a>
-  </div>
-  <div class="post-content-wrap">
-    <div class="post-content">
-      <div class="post-date">
-        <i class="iconfont icon-time">
-        </i>2022-4-14 12:04</div>
-      <a href="/2022/04/14/crypto/" class="post-title">
-        <h3>crypto</h3>
-      </a>
-      <div class="post-meta">
-        <span><i class="fa fa-tags"></i>
-        
-            <a href="/tags/CPT/">CPT<em>·</em></a>
-          
-        </span>
-        <span>
-          <i class="iconfont icon-file"></i>
-          
-        </span>
-      </div>
-      <div class="float-content">
-        <p>测试</p>
-        <div class="post-bottom">
-          <a href="/2022/04/14/crypto/" class="button-normal">
-            <i class="iconfont icon-caidan"></i>
-          </a>
-        </div>
-      </div>
-    </div>
-  </div>
-</article>
-  
-    
-<article  class="post post-list-thumb post-list-thumb-left"  class="post post-list-thumb" itemscope="" itemtype="https://schema.org/BlogPosting">
-
-  <div class="post-thumb">
-    <a href="/2022/04/14/misc/">
-      <img class="lazyload" onerror="imgError(this,3)" src="" data-src="/images/back/tokyo-wallpaper.jpg">
-    </a>
-  </div>
-  <div class="post-content-wrap">
-    <div class="post-content">
-      <div class="post-date">
-        <i class="iconfont icon-time">
-        </i>2022-4-14 12:04</div>
-      <a href="/2022/04/14/misc/" class="post-title">
-        <h3>misc</h3>
-      </a>
-      <div class="post-meta">
-        <span><i class="fa fa-tags"></i>
-        
-            <a href="/tags/Misc/">Misc<em>·</em></a>
-          
-        </span>
-        <span>
-          <i class="iconfont icon-file"></i>
-          
-        </span>
-      </div>
-      <div class="float-content">
-        <p>测试</p>
-        <div class="post-bottom">
-          <a href="/2022/04/14/misc/" class="button-normal">
-            <i class="iconfont icon-caidan"></i>
-          </a>
-        </div>
-      </div>
-    </div>
-  </div>
-</article>
-  
-    
-<article  class="post post-list-thumb" itemscope="" itemtype="https://schema.org/BlogPosting">
-
-  <div class="post-thumb">
-    <a href="/2022/04/14/pwn/">
-      <img class="lazyload" onerror="imgError(this,3)" src="" data-src="/images/back/melting-astronaut-wallpaper.jpg">
-    </a>
-  </div>
-  <div class="post-content-wrap">
-    <div class="post-content">
-      <div class="post-date">
-        <i class="iconfont icon-time">
-        </i>2022-4-14 12:04</div>
-      <a href="/2022/04/14/pwn/" class="post-title">
-        <h3>pwn</h3>
-      </a>
-      <div class="post-meta">
-        <span><i class="fa fa-tags"></i>
-        
-            <a href="/tags/PWN/">PWN<em>·</em></a>
-          
-        </span>
-        <span>
-          <i class="iconfont icon-file"></i>
-          
-        </span>
-      </div>
-      <div class="float-content">
-        <p>测试</p>
-        <div class="post-bottom">
-          <a href="/2022/04/14/pwn/" class="button-normal">
-            <i class="iconfont icon-caidan"></i>
-          </a>
-        </div>
-      </div>
-    </div>
-  </div>
-</article>
-  
-    
-<article  class="post post-list-thumb post-list-thumb-left"  class="post post-list-thumb" itemscope="" itemtype="https://schema.org/BlogPosting">
-
-  <div class="post-thumb">
-    <a href="/2022/04/14/web/">
-      <img class="lazyload" onerror="imgError(this,3)" src="" data-src="/images/back/alien-sunrize-wallpaper.png">
-    </a>
-  </div>
-  <div class="post-content-wrap">
-    <div class="post-content">
-      <div class="post-date">
-        <i class="iconfont icon-time">
-        </i>2022-4-14 12:04</div>
-      <a href="/2022/04/14/web/" class="post-title">
-        <h3>web</h3>
-      </a>
-      <div class="post-meta">
-        <span><i class="fa fa-tags"></i>
-        
-            <a href="/tags/WEB/">WEB<em>·</em></a>
-          
-        </span>
-        <span>
-          <i class="iconfont icon-file"></i>
-          
-        </span>
-      </div>
-      <div class="float-content">
-        <p>测试</p>
-        <div class="post-bottom">
-          <a href="/2022/04/14/web/" class="button-normal">
-            <i class="iconfont icon-caidan"></i>
-          </a>
-        </div>
-      </div>
-    </div>
-  </div>
-</article>
-  
-    
-<article  class="post post-list-thumb" itemscope="" itemtype="https://schema.org/BlogPosting">
-
-  <div class="post-thumb">
-    <a href="/2022/04/14/other/">
-      <img class="lazyload" onerror="imgError(this,3)" src="" data-src="/images/back/summer-vibes-wallpaper.jpg">
-    </a>
-  </div>
-  <div class="post-content-wrap">
-    <div class="post-content">
-      <div class="post-date">
-        <i class="iconfont icon-time">
-        </i>2022-4-14 12:04</div>
-      <a href="/2022/04/14/other/" class="post-title">
-        <h3>other</h3>
-      </a>
-      <div class="post-meta">
-        <span><i class="fa fa-tags"></i>
-        
-        </span>
-        <span>
-          <i class="iconfont icon-file"></i>
-          
-            <a href="/categories/%E5%85%B6%E4%BB%96/">其他</a>
-          
-        </span>
-      </div>
-      <div class="float-content">
-        <p>测试</p>
-        <div class="post-bottom">
-          <a href="/2022/04/14/other/" class="button-normal">
-            <i class="iconfont icon-caidan"></i>
-          </a>
-        </div>
-      </div>
-    </div>
-  </div>
-</article>
-  
-
-
-    </main>
-      <!-- 首页默认取最最新文章集 -->
-    <!-- 
-      <nav class="navigator">
-        
-        <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">&lt;i class&#x3D;&quot;iconfont icon-right&quot;&gt;&lt;&#x2F;i&gt;</a>
-      </nav>
-     -->
-  </div>
-  
-    <div id="pagination"><a href="/page/2/" class="">Previous</a></div>
-  
+        <hr>
+        <p><i class="iconfont icon-write"></i>努力学习逆向</p>
+      </section>
+    </main><!-- #main -->
+  </div><!-- #primary -->
 </div>
+
+
 
     </div>    
     <div class="ins-search">
